@@ -83,7 +83,7 @@ Credit card payment implementation of the PaymentStrategy interface.
 
 ### Initial Product Setup
 
-The system can be populated with initial products using the `DatabaseHelper.addInitialProducts()` method:
+The system can be populated with initial products using the DatabaseHelper.addInitialProducts() method:
 
 ```java
 public static void main(String[] args) {
