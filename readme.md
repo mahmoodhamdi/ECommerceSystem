@@ -98,16 +98,11 @@ public static void main(String[] args) {
 - SQLite JDBC Driver
 - Java Swing
 
-## License
-
-This project is released under the [MIT License](https://opensource.org/licenses/MIT).
-
 ## Acknowledgments
 
 - Professor Dr. Mahmoud Al-Bassiouni, for the course and guidance.
 - [SQLite JDBC Driver](https://sqlite.org/jdbc.html)
 - [Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/learn/index.html)
-- [MIT License](https://opensource.org/licenses/MIT)
 - [Observer Pattern](https://en.wikipedia.org/wiki/Observer_pattern)
 - [Singleton Pattern](https://en.wikipedia.org/wiki/Singleton_pattern)
 - [Factory Pattern](https://en.wikipedia.org/wiki/Factory_method_pattern)
