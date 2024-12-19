@@ -6,8 +6,8 @@
 
 1. Open the project in Visual Studio Code
 2. Run the application:
-   - Open the Run and Debug view (click play icon in sidebar or press `Ctrl+Shift+D`)
-   - Select the `Launch ECommerceGUI` configuration
+   - Open the Run and Debug view click play icon in sidebar or press Ctrl+Shift+D
+   - Select the Launch ECommerceGUI configuration
    - Click the green play button to start the application
 
 ## System Architecture
@@ -16,7 +16,7 @@
 
 #### DatabaseHelper
 
-A singleton class managing SQLite database connections and CRUD operations for the `products` table.
+A singleton class managing SQLite database connections and CRUD operations for the products table.
 
 - **Design Pattern**: Singleton
 - **Rationale**: Maintains a single database connection instance with global access point
