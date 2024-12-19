@@ -1,176 +1,116 @@
-# E-Commerce System
+# E-Commerce System Documentation
 
-A Java-based E-Commerce system implementing various design patterns and featuring a modern GUI interface.
+## Getting Started
 
-## Design Patterns Implemented
+### Setting Up in Visual Studio Code
 
-### 1. Singleton Pattern
+1. Open the project in Visual Studio Code
+2. Run the application:
+   - Open the Run and Debug view (click play icon in sidebar or press `Ctrl+Shift+D`)
+   - Select the `Launch ECommerceGUI` configuration
+   - Click the green play button to start the application
 
-- **Class**: `ShoppingCart`
-- **Purpose**: Ensures only one shopping cart instance exists throughout the application
-- **Implementation**: Private constructor and static getInstance() method
+## System Architecture
 
-### 2. Factory Pattern
+### Core Components
 
-- **Class**: `ProductFactory`
-- **Purpose**: Creates different types of products without exposing creation logic
-- **Products**:
-  - Electronics
-  - Clothing
-  - Discounted Products
+#### DatabaseHelper
 
-### 3. Observer Pattern
+A singleton class managing SQLite database connections and CRUD operations for the `products` table.
 
-- **Interface**: `Observer`, `Subject`
-- **Purpose**: Updates GUI components when cart changes
-- **Implementation**:
-  - ShoppingCart (Subject) notifies observers of changes
-  - GUI (Observer) updates display accordingly
+- **Design Pattern**: Singleton
+- **Rationale**: Maintains a single database connection instance with global access point
 
-### 4. Decorator Pattern
+#### ECommerceGUI
 
-- **Class**: `ProductDecorator`
-- **Purpose**: Adds additional behaviors to products dynamically
-- **Implementation**:
-  - `DiscountedProduct` extends ProductDecorator
-  - Allows adding discounts to any product type
+The main graphical user interface component displaying products and shopping cart.
 
-### 5. Strategy Pattern
+- **Design Pattern**: Observer
+- **Rationale**: Monitors and responds to shopping cart changes in real-time
 
-- **Interface**: `PaymentStrategy`
-- **Purpose**: Encapsulates different payment methods
-- **Implementation**:
-  - `CreditCardPayment` strategy with validation
-  - Easily extensible for new payment methods
+#### FormValidator
 
-## Features
+Handles input validation for various form fields including CVV, expiry date, and email.
 
-### Product Management
+#### Product
 
-- Different product categories (Electronics, Clothing)
-- Product details (name, price, description, stock)
-- Discount support
-- Dynamic product creation using Factory pattern
+Data model representing product information including name, price, description, and stock quantity.
 
-### Shopping Cart
+#### ProductFactory
 
-- Add/remove products
-- Real-time total calculation
-- Cart state persistence using Singleton pattern
-- Observable cart changes
+Manages product creation and database integration.
 
-### Payment Processing
+- **Design Pattern**: Factory
+- **Rationale**: Centralizes product creation logic for improved modularity and extensibility
 
-- Credit card payment support
-- Comprehensive form validation:
-  - Luhn algorithm for card number validation
-  - CVV validation (3-4 digits)
-  - Expiry date validation (MM/YY format)
-  - Future date verification
+#### ShoppingCart
 
-### GUI Features
+Handles shopping cart operations and total price calculations.
 
-- Split-pane interface
-- Product listing with details
-- Interactive shopping cart
-- System message area
-- Form validation feedback
-- Payment processing dialog
+- **Design Pattern**: Singleton
+- **Rationale**: Maintains consistent cart state across the application
 
-## Form Validation Details
+#### PaymentStrategy
 
-### Credit Card Validation
+Defines the payment processing interface.
 
-- Card number must be 13-16 digits
-- Must pass Luhn algorithm check
-- Spaces and hyphens are automatically removed
-- Masked display for security
+- **Design Pattern**: Strategy
+- **Rationale**: Enables flexible payment method implementation and switching
+
+#### CreditCardPayment
+
+Credit card payment implementation of the PaymentStrategy interface.
+
+## Validation Rules
 
 ### CVV Validation
 
-- Must be 3 or 4 digits
-- Numeric only
+- 3 or 4 digits required
+- Numbers only
 
 ### Expiry Date Validation
 
-- MM/YY format required
-- Month must be 01-12
-- Must be a future date
-- Automatic century handling (20YY)
+- Format: MM/YY
+- Month range: 01-12
+- Must be future date
+- Assumes 20YY for year
 
-## Class Structure
+### Email Validation
 
-### Core Classes
+- Standard email format checking
 
-```base
-Product (base class)
-├── Electronics
-├── Clothing
-└── ProductDecorator
-    └── DiscountedProduct
+## Application Setup
 
-ShoppingCart (Singleton)
-└── implements Subject
+### Initial Product Setup
 
-PaymentStrategy (interface)
-└── CreditCardPayment
-
-Observer (interface)
-└── ECommerceGUI
-```
-
-### Utility Classes
-
-```base
-FormValidator
-└── Credit Card Validation Methods
-```
-
-## Usage Examples
-
-### Creating Products
+The system can be populated with initial products using the `DatabaseHelper.addInitialProducts()` method:
 
 ```java
-// Create regular product
-Product laptop = ProductFactory.createProduct("electronics", "Laptop", 999.99, "High-performance laptop", 10);
-
-// Create discounted product
-Product discountedPhone = ProductFactory.createDiscountedProduct(
-    ProductFactory.createProduct("electronics", "Phone", 599.99, "Smartphone", 15),
-    20 // 20% discount
-);
-```
-
-### Payment Processing
-
-```java
-// Example of valid payment details
-String cardNumber = "4532015112830366";
-String cvv = "123";
-String expiryDate = "12/25";
-
-try {
-    PaymentStrategy payment = new CreditCardPayment(cardNumber, cvv, expiryDate);
-    payment.pay(totalAmount);
-} catch (IllegalArgumentException e) {
-    // Handle validation errors
+public static void main(String[] args) {
+    // Add initial products to the database
+    DatabaseHelper.addInitialProducts();
+    SwingUtilities.invokeLater(() -> new ECommerceGUI());
 }
 ```
 
-## Error Handling
+## Dependencies
 
-The system provides comprehensive error handling:
+- SQLite JDBC Driver
+- Java Swing
 
-- Input validation with detailed error messages
-- Payment processing validation
-- Stock availability checking
-- GUI state management
+## License
 
-## Future Enhancements
+This project is released under the [MIT License](https://opensource.org/licenses/MIT).
 
-- Additional payment methods
-- User authentication
-- Order history
-- Inventory management
-- More product categories
-- Advanced search functionality
+## Acknowledgments
+
+- Professor Dr. Mahmoud Al-Bassiouni, for the course and guidance.
+- [SQLite JDBC Driver](https://sqlite.org/jdbc.html)
+- [Java Swing](https://docs.oracle.com/javase/tutorial/uiswing/learn/index.html)
+- [MIT License](https://opensource.org/licenses/MIT)
+- [Observer Pattern](https://en.wikipedia.org/wiki/Observer_pattern)
+- [Singleton Pattern](https://en.wikipedia.org/wiki/Singleton_pattern)
+- [Factory Pattern](https://en.wikipedia.org/wiki/Factory_method_pattern)
+- [Strategy Pattern](https://en.wikipedia.org/wiki/Strategy_pattern)
+- [Design Patterns](https://refactoring.guru/design-patterns)
+- [Java Documentation](https://docs.oracle.com/javase/8/docs/api/)
