@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +24,12 @@ public class ECommerceGUI implements Observer {
 
     private void initializeProducts() {
         availableProducts = new ArrayList<>();
-        // Using Factory pattern to create products
-        availableProducts.add(ProductFactory.createProduct("electronics", "Laptop", 999.99, "High-performance laptop", 10));
-        availableProducts.add(ProductFactory.createProduct("electronics", "Smartphone", 599.99, "Latest model smartphone", 15));
-        availableProducts.add(ProductFactory.createProduct("clothing", "T-Shirt", 29.99, "Cotton T-Shirt", 50));
-        
-        // Using Decorator pattern to create discounted products
-        Product headphones = ProductFactory.createProduct("electronics", "Headphones", 99.99, "Wireless headphones", 20);
-        availableProducts.add(ProductFactory.createDiscountedProduct(headphones, 20)); // 20% discount
+        try {
+            // Fetch products from the database
+            availableProducts = DatabaseHelper.getAllProducts();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setupGUI() {
@@ -212,6 +211,9 @@ public class ECommerceGUI implements Observer {
     }
 
     public static void main(String[] args) {
+        // Add initial products to the database
+        DatabaseHelper.addInitialProducts();
+
         SwingUtilities.invokeLater(() -> new ECommerceGUI());
     }
 }

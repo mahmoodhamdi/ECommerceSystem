@@ -1,234 +1,176 @@
+# E-Commerce System
 
-### 1. **E-commerce System Overview**
-This system will consist of:
-- A product catalog with different product types.
-- A shopping cart to manage added items.
-- An order system that processes payments and notifies the customer.
-- A simple GUI interface to interact with the system.
+A Java-based E-Commerce system implementing various design patterns and featuring a modern GUI interface.
 
-### 2. **Design Patterns**
-We'll use the following design patterns:
-- **Singleton Pattern**: For managing the shopping cart.
-- **Factory Pattern**: For creating different types of products.
-- **Observer Pattern**: For notifying customers about order status.
-- **Decorator Pattern**: For adding features like discounts to products.
-- **Strategy Pattern**: For handling different payment methods.
+## Design Patterns Implemented
 
----
+### 1. Singleton Pattern
 
-### 3. **Class Structure**
+- **Class**: `ShoppingCart`
+- **Purpose**: Ensures only one shopping cart instance exists throughout the application
+- **Implementation**: Private constructor and static getInstance() method
 
-#### 3.1. **Product Interface and Implementations (Factory Pattern)**
+### 2. Factory Pattern
+
+- **Class**: `ProductFactory`
+- **Purpose**: Creates different types of products without exposing creation logic
+- **Products**:
+  - Electronics
+  - Clothing
+  - Discounted Products
+
+### 3. Observer Pattern
+
+- **Interface**: `Observer`, `Subject`
+- **Purpose**: Updates GUI components when cart changes
+- **Implementation**:
+  - ShoppingCart (Subject) notifies observers of changes
+  - GUI (Observer) updates display accordingly
+
+### 4. Decorator Pattern
+
+- **Class**: `ProductDecorator`
+- **Purpose**: Adds additional behaviors to products dynamically
+- **Implementation**:
+  - `DiscountedProduct` extends ProductDecorator
+  - Allows adding discounts to any product type
+
+### 5. Strategy Pattern
+
+- **Interface**: `PaymentStrategy`
+- **Purpose**: Encapsulates different payment methods
+- **Implementation**:
+  - `CreditCardPayment` strategy with validation
+  - Easily extensible for new payment methods
+
+## Features
+
+### Product Management
+
+- Different product categories (Electronics, Clothing)
+- Product details (name, price, description, stock)
+- Discount support
+- Dynamic product creation using Factory pattern
+
+### Shopping Cart
+
+- Add/remove products
+- Real-time total calculation
+- Cart state persistence using Singleton pattern
+- Observable cart changes
+
+### Payment Processing
+
+- Credit card payment support
+- Comprehensive form validation:
+  - Luhn algorithm for card number validation
+  - CVV validation (3-4 digits)
+  - Expiry date validation (MM/YY format)
+  - Future date verification
+
+### GUI Features
+
+- Split-pane interface
+- Product listing with details
+- Interactive shopping cart
+- System message area
+- Form validation feedback
+- Payment processing dialog
+
+## Form Validation Details
+
+### Credit Card Validation
+
+- Card number must be 13-16 digits
+- Must pass Luhn algorithm check
+- Spaces and hyphens are automatically removed
+- Masked display for security
+
+### CVV Validation
+
+- Must be 3 or 4 digits
+- Numeric only
+
+### Expiry Date Validation
+
+- MM/YY format required
+- Month must be 01-12
+- Must be a future date
+- Automatic century handling (20YY)
+
+## Class Structure
+
+### Core Classes
+
+```base
+Product (base class)
+├── Electronics
+├── Clothing
+└── ProductDecorator
+    └── DiscountedProduct
+
+ShoppingCart (Singleton)
+└── implements Subject
+
+PaymentStrategy (interface)
+└── CreditCardPayment
+
+Observer (interface)
+└── ECommerceGUI
+```
+
+### Utility Classes
+
+```base
+FormValidator
+└── Credit Card Validation Methods
+```
+
+## Usage Examples
+
+### Creating Products
 
 ```java
-public interface Product {
-    void displayDetails();
-}
+// Create regular product
+Product laptop = ProductFactory.createProduct("electronics", "Laptop", 999.99, "High-performance laptop", 10);
 
-public class Electronics implements Product {
-    public void displayDetails() {
-        System.out.println("This is an electronic product.");
-    }
-}
-
-public class Clothing implements Product {
-    public void displayDetails() {
-        System.out.println("This is a clothing product.");
-    }
-}
+// Create discounted product
+Product discountedPhone = ProductFactory.createDiscountedProduct(
+    ProductFactory.createProduct("electronics", "Phone", 599.99, "Smartphone", 15),
+    20 // 20% discount
+);
 ```
 
-**ProductFactory:**
-```java
-public class ProductFactory {
-    public Product createProduct(String type) {
-        if(type.equals("electronics")) {
-            return new Electronics();
-        } else if(type.equals("clothing")) {
-            return new Clothing();
-        }
-        return null;
-    }
-}
-```
-
----
-
-#### 3.2. **ShoppingCart Singleton**
+### Payment Processing
 
 ```java
-public class ShoppingCart {
-    private static ShoppingCart instance;
+// Example of valid payment details
+String cardNumber = "4532015112830366";
+String cvv = "123";
+String expiryDate = "12/25";
 
-    private ShoppingCart() { }
-
-    public static ShoppingCart getInstance() {
-        if(instance == null) {
-            instance = new ShoppingCart();
-        }
-        return instance;
-    }
-
-    public void addProduct(Product product) {
-        System.out.println("Product added to cart.");
-    }
+try {
+    PaymentStrategy payment = new CreditCardPayment(cardNumber, cvv, expiryDate);
+    payment.pay(totalAmount);
+} catch (IllegalArgumentException e) {
+    // Handle validation errors
 }
 ```
 
----
+## Error Handling
 
-#### 3.3. **Payment Strategy (Strategy Pattern)**
+The system provides comprehensive error handling:
 
-```java
-public interface PaymentStrategy {
-    void pay(double amount);
-}
+- Input validation with detailed error messages
+- Payment processing validation
+- Stock availability checking
+- GUI state management
 
-public class CreditCardPayment implements PaymentStrategy {
-    public void pay(double amount) {
-        System.out.println("Paid " + amount + " using Credit Card.");
-    }
-}
+## Future Enhancements
 
-public class PayPalPayment implements PaymentStrategy {
-    public void pay(double amount) {
-        System.out.println("Paid " + amount + " using PayPal.");
-    }
-}
-```
-
-**Order Class:**
-```java
-public class Order {
-    private PaymentStrategy paymentStrategy;
-
-    public Order(PaymentStrategy paymentStrategy) {
-        this.paymentStrategy = paymentStrategy;
-    }
-
-    public void processOrder(double amount) {
-        paymentStrategy.pay(amount);
-    }
-}
-```
-
----
-
-#### 3.4. **Order Status Notification (Observer Pattern)**
-
-```java
-public interface Observer {
-    void update(String orderStatus);
-}
-
-public class Customer implements Observer {
-    private String name;
-
-    public Customer(String name) {
-        this.name = name;
-    }
-
-    public void update(String orderStatus) {
-        System.out.println(name + " received notification: " + orderStatus);
-    }
-}
-
-public class OrderStatus {
-    private List<Observer> observers = new ArrayList<>();
-
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    public void notifyObservers(String status) {
-        for(Observer observer : observers) {
-            observer.update(status);
-        }
-    }
-}
-```
-
----
-
-#### 3.5. **Product Decorator (Decorator Pattern)**
-
-```java
-public abstract class ProductDecorator implements Product {
-    protected Product decoratedProduct;
-
-    public ProductDecorator(Product decoratedProduct) {
-        this.decoratedProduct = decoratedProduct;
-    }
-
-    public void displayDetails() {
-        decoratedProduct.displayDetails();
-    }
-}
-
-public class DiscountedProduct extends ProductDecorator {
-    public DiscountedProduct(Product decoratedProduct) {
-        super(decoratedProduct);
-    }
-
-    public void displayDetails() {
-        super.displayDetails();
-        System.out.println("This product has a discount.");
-    }
-}
-```
-
----
-
-### 4. **UML Diagram**
-
-Here's a simplified UML diagram representing the main classes and their relationships:
-
-```plaintext
-+-----------------+    +---------------------+   +-------------------+
-|     Product    |<-->|    ProductFactory    |   |    ShoppingCart   |
-+-----------------+    +---------------------+   +-------------------+
-| + displayDetails() |   | + createProduct()  |   | + addProduct()    |
-+-----------------+    +---------------------+   +-------------------+
-       ^                        |                          ^
-       |                        V                          |
-+---------------+       +--------------------+       +--------------+
-| Electronics   |       |   OrderStatus      |       |   Order      |
-+---------------+       +--------------------+       +--------------+
-| + displayDetails()  |   | + addObserver()    |   | + processOrder()|
-+---------------+       | + notifyObservers() |       +--------------+
-       ^                +--------------------+                ^
-       |                                                           |
-+----------------+                                          +-------------------+
-|   Clothing     |                                          | PaymentStrategy   |
-+----------------+                                          +-------------------+
-| + displayDetails()  |                                          | + pay()          |
-+-----------------+                                          +-------------------+
-                                                                 ^          ^
-                                                           +---------------------+
-                                                           | CreditCardPayment   |
-                                                           +---------------------+
-                                                           | + pay()             |
-                                                           +---------------------+
-                                                           | PayPalPayment       |
-                                                           +---------------------+
-                                                           | + pay()             |
-                                                           +---------------------+
-```
-
----
-
-### 5. **Basic GUI**
-
-Using **Swing** (for simplicity), we can create the following GUI elements:
-
-1. **Product List**:
-    - Display available products.
-    - Option to add products to the shopping cart.
-
-2. **Shopping Cart**:
-    - List of added products.
-    - Button to place an order.
-
-3. **Order Summary**:
-    - Payment method selection (credit card, PayPal).
-    - Order confirmation and payment processing.
+- Additional payment methods
+- User authentication
+- Order history
+- Inventory management
+- More product categories
+- Advanced search functionality

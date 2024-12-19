@@ -1,4 +1,5 @@
 public class Product {
+    private int id;
     private String name;
     private double price;
     private String description;
@@ -9,6 +10,14 @@ public class Product {
         this.price = price;
         this.description = description;
         this.stockQuantity = stockQuantity;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
